@@ -1,6 +1,7 @@
 import React from "react"; // Reactをインポート
 import "./App.css";
 import RandomJokes from "./components/RandomJokes";
+import CreatePlaylist from "./components/CreatePlaylist";
 
 function App() {
   return (
@@ -9,6 +10,7 @@ function App() {
         <h1>Joke API</h1>
       </header>
       <RandomJokes />
+      <CreatePlaylist />
     </div>
   );
 }
