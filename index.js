@@ -1,33 +1,75 @@
-const express = require('express');
-const LimitingMiddleware = require('limiting-middleware');
-const { types, randomJoke, randomTen, randomSelect, jokeByType, jokeById, count } = require('./handler');
+const express = require("express");
+const LimitingMiddleware = require("limiting-middleware");
+const {
+  types,
+  randomJoke,
+  randomTen,
+  randomSelect,
+  jokeByType,
+  jokeById,
+  count,
+} = require("./handler");
 
 const app = express();
+const cors = require("cors");
+app.use(cors());
+app.use(express.json());
+
+app.use((req, res, next) => {
+  res.header("Access-Control-Allow-Origin", "*");
+  res.header("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE, OPTIONS");
+  res.header(
+    "Access-Control-Allow-Headers",
+    "Origin, X-Requested-With, Content-Type, Accept, Authorization"
+  );
+
+  if (req.method === "OPTIONS") {
+    return res.sendStatus(200);
+  }
+  next();
+});
 
 app.use(new LimitingMiddleware().limitByIp());
 
 app.use((req, res, next) => {
-  res.header('Access-Control-Allow-Origin', '*');
+  res.header("Access-Control-Allow-Origin", "*");
   next();
 });
 
-app.get('/', (req, res) => {
-  res.send('Try /random_joke, /random_ten, /jokes/random, or /jokes/ten , /jokes/random/<any-number>');
+let playlists = [];
+
+app.post("/playlists", (req, res) => {
+  console.log("POST /playlists Request received", req.body);
+  const { name, description, visibility } = req.body;
+  const playlist = { id: playlists.length + 1, name, description, visibility };
+  playlists.push(playlist);
+  res.json(playlist);
 });
 
-app.get('/ping', (req, res) => {
-  res.send('pong');
+app.get("/playlists", (req, res) => {
+  console.log("GET /playlists Request received");
+  res.json(playlists);
 });
 
-app.get('/random_joke', (req, res) => {
+app.get("/", (req, res) => {
+  res.send(
+    "Try /random_joke, /random_ten, /jokes/random, or /jokes/ten , /jokes/random/<any-number>"
+  );
+});
+
+app.get("/ping", (req, res) => {
+  res.send("pong");
+});
+
+app.get("/random_joke", (req, res) => {
   res.json(randomJoke());
 });
 
-app.get('/random_ten', (req, res) => {
+app.get("/random_ten", (req, res) => {
   res.json(randomTen());
 });
 
-app.get('/jokes/random', (req, res) => {
+app.get("/jokes/random", (req, res) => {
   res.json(randomJoke());
 });
 
@@ -46,44 +88,46 @@ app.get("/jokes/random/:num", (req, res) => {
     }
   } catch (e) {
     return next(e);
-  } 
+  }
 });
 
-app.get('/jokes/ten', (req, res) => {
+app.get("/jokes/ten", (req, res) => {
   res.json(randomTen());
 });
 
-app.get('/jokes/:type/random', (req, res) => {
+app.get("/jokes/:type/random", (req, res) => {
   res.json(jokeByType(req.params.type, 1));
 });
 
-app.get('/jokes/:type/ten', (req, res) => {
+app.get("/jokes/:type/ten", (req, res) => {
   res.json(jokeByType(req.params.type, 10));
 });
 
-app.get('/jokes/:id', (req, res, next) => {
+app.get("/jokes/:id", (req, res, next) => {
   try {
     const { id } = req.params;
     const joke = jokeById(+id);
-    if (!joke) return next({ statusCode: 404, message: 'joke not found' });
+    if (!joke) return next({ statusCode: 404, message: "joke not found" });
     return res.json(joke);
   } catch (e) {
     return next(e);
   }
 });
 
-app.get('/types', (req, res, next) => {
+app.get("/types", (req, res, next) => {
   res.json(types);
-})
+});
 
 app.use((err, req, res, next) => {
   const statusCode = err.statusCode || 500;
 
   res.status(statusCode).json({
-    type: 'error', message: err.message
+    type: "error",
+    message: err.message,
   });
 });
 
 const PORT = process.env.PORT || 3005;
-app.listen(PORT, () => console.log(`listening on ${PORT}`));
-
+app.listen(PORT, () => {
+  console.log(`Server is running: http://localhost:${PORT}`);
+});

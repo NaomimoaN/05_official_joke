@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import axios from "axios";
 
 const CreatePlaylist = () => {
   const [playListName, setPlayListName] = useState("");
@@ -10,18 +11,19 @@ const CreatePlaylist = () => {
     console.log(playListName, playListDescription, playListVisibility);
 
     const playList = {
-        name: playListName,
+      name: playListName,
       description: playListDescription,
       visibility: playListVisibility,
     };
 
-    axios.post("http://localhost:3001/playlists", playList)
-    .then((res) => {
+    axios
+      .post("http://localhost:3005/playlists", playList)
+      .then((res) => {
         console.log(res);
-    })
-    .catch((err) => {
+      })
+      .catch((err) => {
         console.log(err);
-    });
+      });
   };
 
   return (
@@ -44,6 +46,9 @@ const CreatePlaylist = () => {
         ></textarea>
         <button type="submit">Create Playlist</button>
       </form>
+      <button onClick={() => setPlayListVisibility("public")}>Public</button>
+      <button onClick={() => setPlayListVisibility("private")}>Private</button>
+      
     </div>
   );
 };

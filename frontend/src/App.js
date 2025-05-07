@@ -2,7 +2,7 @@ import React from "react"; // Reactをインポート
 import "./App.css";
 import RandomJokes from "./components/RandomJokes";
 import CreatePlaylist from "./components/CreatePlaylist";
-
+import Playlist from "./components/Playlist";
 function App() {
   return (
     <div className="App">
@@ -11,6 +11,7 @@ function App() {
       </header>
       <RandomJokes />
       <CreatePlaylist />
+      <Playlist />
     </div>
   );
 }
