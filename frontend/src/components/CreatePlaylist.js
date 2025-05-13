@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import axios from "axios";
 
-const CreatePlaylist = () => {
+const CreatePlaylist = ({ onCreatePlayList }) => {
   const [playListName, setPlayListName] = useState("");
   const [playListDescription, setPlayListDescription] = useState("");
   const [playListVisibility, setPlayListVisibility] = useState("public");
@@ -24,6 +24,7 @@ const CreatePlaylist = () => {
       .catch((err) => {
         console.log(err);
       });
+    onCreatePlayList(playList);
   };
 
   return (
@@ -48,7 +49,6 @@ const CreatePlaylist = () => {
       </form>
       <button onClick={() => setPlayListVisibility("public")}>Public</button>
       <button onClick={() => setPlayListVisibility("private")}>Private</button>
-      
     </div>
   );
 };

@@ -1,31 +1,7 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
 
-const Playlist = () => {
-  const [playlists, setPlaylists] = useState([]);
-  const [error, setError] = useState(null);
-  const [loading, setLoading] = useState(true);
-
-  useEffect(() => {
-    const fetchPlaylists = async () => {
-      try {
-        setLoading(true);
-        const response = await axios.get("http://localhost:3005/playlists");
-        setPlaylists(response.data);
-        setError(null);
-      } catch (err) {
-        console.error("Fetching playlists failed:", err);
-        setError(
-          "Can't connect to the server. Please check if the backend server is running."
-        );
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    fetchPlaylists();
-  }, []);
-
+const Playlist = ({playlists, loading, error}) => {
   if (loading) {
     return <div>Loading...</div>;
   }
